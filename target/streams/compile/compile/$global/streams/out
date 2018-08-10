@@ -1,0 +1,5 @@
+[0m[[0m[31merror[0m] [0m[0m/Users/mjr/dev/workspace/shipstation-scala/src/main/scala/com/mypetdefense/shipstation/Weight.scala:14:6: identifier expected but ':' found.[0m
+[0m[[0m[31merror[0m] [0m[0m  raw: Option[JValue] = None[0m
+[0m[[0m[31merror[0m] [0m[0m     ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/mjr/dev/workspace/shipstation-scala/src/main/scala/com/mypetdefense/shipstation/Weight.scala:18:1: ')' expected but eof found.[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
