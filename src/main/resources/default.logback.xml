@@ -1,0 +1,16 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread %X{sourceThread}]  %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="net.liftweb.util.TimeHelpers" level="warn"/>
+  <logger name="com.ning.http.client.providers.netty.channel.pool.DefaultChannelPool" level="warn"/>
+  <logger name="net.liftweb.db.ProtoDBVendor" level="warn"/>
+
+  <root level="info">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
+
