@@ -9,17 +9,18 @@ import net.liftweb.util.Helpers._
 import dispatch._, Defaults._
 
 case class Address(
-  name: String,
-  company: String,
+  name: Option[String] = None,
+  company: Option[String] = None,
   street1: String,
-  street2: String,
-  street3: String,
+  street2: Option[String] = None,
+  street3: Option[String] = None,
   city: String,
   state: String,
   postalCode: String,
-  country: String,
-  phone: String,
-  addressVerified: String,
+  country: Option[String] = None,
+  phone: Option[String] = None,
+  residential: Option[Boolean] = None,
+  addressVerified: Option[String] = None,
   raw: Option[JValue] = None
 ) extends ShipStationObject {
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))
