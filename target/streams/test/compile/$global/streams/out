@@ -1,7 +1,0 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/mjr/dev/workspace/shipstation-scala/src/test/scala/com/mypetdefense/shipstation/OrderSpec.scala:7:8: not found: object me[0m
-[0m[[0m[31merror[0m] [0m[0mimport me.frmr.stripe.ShipStationHelpers._[0m
-[0m[[0m[31merror[0m] [0m[0m       ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/mjr/dev/workspace/shipstation-scala/src/test/scala/com/mypetdefense/shipstation/OrderSpec.scala:171:22: not found: value camelifyFieldNames[0m
-[0m[[0m[31merror[0m] [0m[0m     val testOrder = camelifyFieldNames(parse(json)).extract[Order][0m
-[0m[[0m[31merror[0m] [0m[0m                     ^[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
