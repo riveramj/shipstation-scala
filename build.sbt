@@ -9,6 +9,7 @@ scalaVersion := "2.11.12"
 libraryDependencies ++= {
   val liftVersion = "2.6.3"
   Seq(
+    "ch.qos.logback"            %  "logback-classic"      % "1.1.3",
     "net.liftweb"               %% "lift-common"          % liftVersion,
     "net.liftweb"               %% "lift-util"            % liftVersion,
     "net.liftweb"               %% "lift-json"            % liftVersion,
