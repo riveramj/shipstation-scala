@@ -30,12 +30,16 @@ object AsShipStationResponse extends (Response => ShipStationResponse) {
 /**
  * An executor that will talk to ShipStation for you.
 **/
-class ShipStationExecutor(key: String, secret: String) {
+class ShipStationExecutor(
+  key: String,
+  secret: String,
+  uri: String = "http://private-anon-c83884431a-shipstation.apiary-mock.com"
+) {
   val basicAuthentication = Base64.getEncoder.encodeToString(s"${key}:${secret}".getBytes(StandardCharsets.UTF_8))
 
   val httpExecutor = new Http()
-  val baseReq = url("https://private-anon-6585a12345-shipstation.apiary-mock.com") <:<
-    Map("Authorization" -> s"Basic ${basicAuthentication}", "User-Agent" -> ("shipstation-scala/" + BuildInfo.version))
+  val baseReq = url(uri) <:<
+  Map("Authorization" -> s"Basic ${basicAuthentication}", "User-Agent" -> ("shipstation-scala/" + BuildInfo.version))
   
   implicit val formats = DefaultFormats
 
