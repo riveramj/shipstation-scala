@@ -19,4 +19,8 @@ object ShipStationHelpers {
         x
     } 
   }
+
+  def fixMultiLevelDecomposing(badJson: String) = {
+    badJson.replaceAll("}\"","}").replaceAll("\"\\{","{").replaceAll("\\\\","")
+  }
 }

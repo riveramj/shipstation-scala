@@ -6,10 +6,18 @@ import net.liftweb.json._
   import Extraction._
 import com.mypetdefense.shipstation.ShipStationHelpers._
 
+import scala.util.{Failure => TryFail, Success => TrySuccess, _}
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.language.postfixOps
+
+import scala.collection.concurrent.TrieMap
+
 import org.scalatest._
 
 class OrderSpec extends WordSpec with Matchers {
   implicit val formats = DefaultFormats
+  implicit val shipStationExecutor = new ShipStationExecutor("key", "secret")
 
   "Order object" should {
     "retrieve correct fields from ShipStation's JSON" in {
@@ -171,6 +179,65 @@ class OrderSpec extends WordSpec with Matchers {
       val testOrder = camelifyFieldNames(parse(json)).extract[Order]
 
       testOrder.orderId should equal(94113592)
+      testOrder.orderNumber should equal("TEST-ORDER-API-DOCS")
+      testOrder.customerEmail should equal("headhoncho@whitehouse.gov")
+      testOrder.orderTotal should equal(194.43)
+      testOrder.internalNotes should equal("Customer called and would like to upgrade shipping")
+      testOrder.holdUntilDate should equal(null)
     }
+  }
+
+  "retrieve an order from ShipStation mock server" in {
+    val testOrder = {
+      Try(
+        Await.result(Order.get("178660935"), new DurationInt(10).seconds)
+      ) match {
+        case TrySuccess(Full(shipStationOrder)) =>
+        Full(shipStationOrder)
+      
+      case TrySuccess(shipStationFailure) =>
+        shipStationFailure
+
+      case TryFail(throwable: Throwable) =>
+          Empty
+      }
+    }
+
+    testOrder.map(_.orderId) should equal(Full(94113592))
+  }
+
+  "create an order in ShipStation mock server" in {
+    val billTo = Address(
+      name = Some("Mike Rivera"),
+      street1 = "3605 bellhaven dr",
+      city = "valdosta",
+      state = "georgia",
+      postalCode = "31605"
+    )
+
+    val newOrder = Order.create(
+      orderNumber = "TEST-ORDER-API-DOCS",
+      orderDate = "2018-08-11",
+      orderStatus = "awaiting_shipment",
+      billTo = billTo,
+      shipTo = billTo
+    )
+
+    val testOrder = {
+      Try(
+        Await.result(newOrder, new DurationInt(10).seconds)
+      ) match {
+        case TrySuccess(Full(shipStationOrder)) =>
+        Full(shipStationOrder)
+      
+      case TrySuccess(shipStationFailure) =>
+        shipStationFailure
+
+      case TryFail(throwable: Throwable) =>
+          Empty
+      }
+    }
+
+    testOrder.map(_.orderNumber) should equal(Full("TEST-ORDER-API-DOCS"))
   }
 }
