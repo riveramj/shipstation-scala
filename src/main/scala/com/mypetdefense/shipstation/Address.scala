@@ -25,25 +25,3 @@ case class Address(
 ) extends ShipStationObject {
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))
 }
-
-object Address {
-  def flattenAddressObject(address: Address) = {
-
-    List(
-      address.name.map(n => ("name", n)),
-      address.company.map(c => ("company", c)),
-      Some(("street1", address.street1)),
-      address.street2.map(s => ("street2", s)),
-      address.street3.map(s => ("street3", s)),
-      Some(("city", address.city)),
-      Some(("state", address.state)),
-      Some(("postalCode", address.postalCode)),
-      address.country.map(c => ("country", c)),
-      address.phone.map(p => ("phone", p)),
-      address.residential.map(r => ("residential", r.toString)),
-      address.addressVerified.map( a => ("addressVerified", a))
-    ).flatten.map { case (key, value) =>
-      JField(key, JString(value))
-    }
-  }
-}

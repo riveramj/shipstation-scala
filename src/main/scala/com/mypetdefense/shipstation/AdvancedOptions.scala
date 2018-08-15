@@ -30,4 +30,3 @@ case class AdvancedOptions(
 ) extends ShipStationObject {
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))
 }
-
