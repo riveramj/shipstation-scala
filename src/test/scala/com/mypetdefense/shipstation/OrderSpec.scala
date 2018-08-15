@@ -180,10 +180,10 @@ class OrderSpec extends WordSpec with Matchers {
 
       testOrder.orderId should equal(94113592)
       testOrder.orderNumber should equal("TEST-ORDER-API-DOCS")
-      testOrder.customerEmail should equal("headhoncho@whitehouse.gov")
-      testOrder.orderTotal should equal(194.43)
-      testOrder.internalNotes should equal("Customer called and would like to upgrade shipping")
-      testOrder.holdUntilDate should equal(null)
+      testOrder.customerEmail should equal(Some("headhoncho@whitehouse.gov"))
+      testOrder.orderTotal should equal(Some(194.43))
+      testOrder.internalNotes should equal(Some("Customer called and would like to upgrade shipping"))
+      testOrder.holdUntilDate should equal(None)
     }
   }
 
@@ -203,7 +203,7 @@ class OrderSpec extends WordSpec with Matchers {
       }
     }
 
-    testOrder.map(_.orderId) should equal(Full(94113592))
+    testOrder.map(_.orderId) should equal(Full(178660935))
   }
 
   "create an order in ShipStation mock server" in {
@@ -220,7 +220,9 @@ class OrderSpec extends WordSpec with Matchers {
       orderDate = "2018-08-11",
       orderStatus = "awaiting_shipment",
       billTo = billTo,
-      shipTo = billTo
+      shipTo = billTo,
+      giftMessage = Some("Happy bday!"),
+      weight = Some(Weight(0.4, "ounce"))
     )
 
     val testOrder = {
