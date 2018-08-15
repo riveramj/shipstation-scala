@@ -7,10 +7,10 @@
 
   <logger name="net.liftweb.util.TimeHelpers" level="warn"/>
   <logger name="com.ning.http.client.providers.netty.channel.pool.DefaultChannelPool" level="warn"/>
+  <logger name="com.ning.http.client" level="WARN"/>
   <logger name="net.liftweb.db.ProtoDBVendor" level="warn"/>
 
-  <root level="info">
+  <root level="warn">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>
-
