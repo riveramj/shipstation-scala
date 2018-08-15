@@ -89,12 +89,12 @@ object Order extends Gettable[Order] {
     advancedOptions: Option[AdvancedOptions] = None,
     tagIds: Option[List[Int]] = None
   )(implicit exec: ShipStationExecutor): Future[Box[Order]] = {
-    val requiredParams = Map(
-      "orderNumber" -> orderNumber,
-      "orderDate" -> orderDate,
-      "orderStatus" -> orderStatus,
-      "shipTo" -> compact(render(Extraction.decompose(shipTo))),
-      "billTo" -> compact(render(Extraction.decompose(billTo)))
+    val requiredParams = (
+      ("orderNumber" -> orderNumber) ~
+      ("orderDate" -> orderDate) ~
+      ("orderStatus" -> orderStatus) ~
+      ("billTo" -> Address.flattenAddressObject(billTo)) ~
+      ("shipTo" -> Address.flattenAddressObject(shipTo))
     )
 
     val optionalParams = List(
@@ -122,9 +122,11 @@ object Order extends Gettable[Order] {
       advancedOptions.map(a => ("advancedOptions", compact(render(Extraction.decompose(a))))),
       weight.map(w => ("weight", compact(render(Extraction.decompose(w))))),
       tagIds.map(t => ("tagIds", compact(render(Extraction.decompose(t)))))
-    ).flatten.toMap
+    ).flatten.map { case (key, value) =>
+      JField(key, JString(value))
+    }
 
-    val params = ShipStationHelpers.fixMultiLevelDecomposing(compact(render(requiredParams ++ optionalParams)))
+    val params = compact(render(requiredParams))
 
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createorder" << params
 
