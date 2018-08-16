@@ -9,10 +9,10 @@ import net.liftweb.util.Helpers._
 import dispatch._, Defaults._
 
 case class OrderItem(
-  orderItemId: Int,
+  orderItemId: Option[String] = None,
   lineItemKey: Option[String] = None,
   sku: String,
-  name: Option[String] = None,
+  name: String = "",
   imageUrl: Option[String] = None,
   weight: Option[Weight] = None,
   quantity: Int,
