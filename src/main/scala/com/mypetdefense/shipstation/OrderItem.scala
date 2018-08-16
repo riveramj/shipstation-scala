@@ -11,7 +11,7 @@ import dispatch._, Defaults._
 case class OrderItem(
   orderItemId: Int,
   lineItemKey: Option[String] = None,
-  sku: Option[String] = None,
+  sku: String,
   name: Option[String] = None,
   imageUrl: Option[String] = None,
   weight: Option[Weight] = None,
