@@ -124,6 +124,8 @@ object Order extends Gettable[Order] {
 
     val params = compact(render(Extraction.decompose(newOrder)))
 
+    println(params)
+
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createorder" << params
 
     exec.executeFor[Order](uri)
