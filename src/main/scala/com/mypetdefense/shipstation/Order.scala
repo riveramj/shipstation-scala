@@ -55,6 +55,14 @@ case class Order(
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))
 }
 
+case class HoldOrderResults(
+  success: Boolean,
+  message: String,
+  raw: Option[JValue] = None
+) extends ShipStationObject {
+  def withRaw(raw: JValue) = this.copy(raw = Some(raw))
+}
+
 object Order extends Gettable[Order] {
   def baseResourceCalculator(req: Req) = req / "orders"
   
@@ -129,6 +137,17 @@ object Order extends Gettable[Order] {
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createorder" << params
 
     exec.executeFor[Order](uri)
+  }
+
+  def holdUntil(orderId: Int, holdUntilDate: String)(implicit exec: ShipStationExecutor): Future[Box[HoldOrderResults]] = {
+
+    val orderInfo = ("orderId", orderId) ~ ("holdUntilDate", holdUntilDate)
+
+    val params = compact(render(orderInfo))
+
+    val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "holduntil" << params
+
+    exec.executeFor[HoldOrderResults](uri)
   }
 
    def createLabelForOrder(
