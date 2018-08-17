@@ -23,7 +23,7 @@ case class ShipStationResponse(code: Int, json: JValue)
 **/
 object AsShipStationResponse extends (Response => ShipStationResponse) {
   def apply(res: Response) = {
-    ShipStationResponse(res.getStatusCode(), ShipStationHelpers.camelifyFieldNames(as.lift.Json(res)))
+    ShipStationResponse(res.getStatusCode(), as.lift.Json(res))
   }
 }
 

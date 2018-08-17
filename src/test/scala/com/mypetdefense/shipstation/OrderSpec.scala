@@ -4,7 +4,6 @@ import net.liftweb.common._
 import net.liftweb.json._
   import Serialization._
   import Extraction._
-import com.mypetdefense.shipstation.ShipStationHelpers._
 
 import scala.util.{Failure => TryFail, Success => TrySuccess, _}
 import scala.concurrent.Await
@@ -176,7 +175,7 @@ class OrderSpec extends WordSpec with Matchers {
           "externallyFulfilledBy": null
         }
       """
-      val testOrder = camelifyFieldNames(parse(json)).extract[Order]
+      val testOrder = parse(json).extract[Order]
 
       testOrder.orderId should equal(94113592)
       testOrder.orderNumber should equal("TEST-ORDER-API-DOCS")
