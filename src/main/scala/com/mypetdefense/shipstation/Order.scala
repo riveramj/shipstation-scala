@@ -130,4 +130,67 @@ object Order extends Gettable[Order] {
 
     exec.executeFor[Order](uri)
   }
+
+   def createLabelForOrder(
+    orderId: Int,
+    carrierCode: String,
+    serviceCode: String,
+    confirmation: Option[String] = None,
+    shipDate: String,
+    weight: Option[Weight] = None,
+    dimensions: Option[Dimensions] = None,
+    insuranceOptions: Option[InsuranceOptions] = None,
+    internationalOptions: Option[InternationalOptions] = None,
+    advancedOptions: Option[AdvancedOptions] = None,
+    testLabel: Boolean
+  )(implicit exec: ShipStationExecutor): Future[Box[Label]] = {
+
+    val newLabel = NewLabelForOrder(
+      orderId = orderId,
+      carrierCode = carrierCode,
+      serviceCode = serviceCode,
+      confirmation = confirmation,
+      shipDate = shipDate,
+      weight = weight,
+      dimensions = dimensions,
+      insuranceOptions = insuranceOptions,
+      internationalOptions = internationalOptions,
+      advancedOptions = advancedOptions,
+      testLabel = testLabel
+    )
+
+    val params = compact(render(Extraction.decompose(newLabel)))
+
+    println(params)
+
+    val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createlabelfororder" << params
+
+    exec.executeFor[Label](uri)
+  }
+}
+
+case class NewLabelForOrder(
+  orderId: Int,
+  carrierCode: String,
+  serviceCode: String,
+  confirmation: Option[String] = None,
+  shipDate: String,
+  weight: Option[Weight] = None,
+  dimensions: Option[Dimensions] = None,
+  insuranceOptions: Option[InsuranceOptions] = None,
+  internationalOptions: Option[InternationalOptions] = None,
+  advancedOptions: Option[AdvancedOptions] = None,
+  testLabel: Boolean
+)
+
+case class Label(
+  shipmentId: Int,
+  shipmentCost: Double,
+  insuranceCost: Double,
+  trackingNumber: String,
+  labelData: String,
+  formData: Option[String],
+  raw: Option[JValue] = None
+) extends ShipStationObject {
+  def withRaw(raw: JValue) = this.copy(raw = Some(raw))
 }

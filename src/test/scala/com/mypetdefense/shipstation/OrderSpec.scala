@@ -207,11 +207,11 @@ class OrderSpec extends WordSpec with Matchers {
 
   "create an order in ShipStation mock server" in {
     val billTo = Address(
-      name = Some("Mike Rivera"),
-      street1 = "3605 bellhaven dr",
-      city = "valdosta",
-      state = "georgia",
-      postalCode = "31605"
+      name = Some("Joe Smith"),
+      street1 = "1234 Main St",
+      city = "New York City",
+      state = "New York",
+      postalCode = "10017"
     )
 
     val newOrder = Order.create(
@@ -240,5 +240,74 @@ class OrderSpec extends WordSpec with Matchers {
     }
 
     testOrder.map(_.orderNumber) should equal(Full("TEST-ORDER-API-DOCS"))
+  }
+}
+
+class LabelSpec extends WordSpec with Matchers {
+  implicit val formats = DefaultFormats
+  implicit val shipStationExecutor = new ShipStationExecutor("key", "secret")
+
+  "Label object" should {
+    "retrieve correct fields from ShipStation's JSON" in {
+      val json = """
+        {
+          "orderId": 93348442,
+          "carrierCode": "fedex",
+          "serviceCode": "fedex_2day",
+          "packageCode": "package",
+          "confirmation": {},
+          "shipDate": "2014-04-03",
+          "weight": {
+            "value": 2,
+            "units": "pounds"
+          },
+          "dimensions": {},
+          "insuranceOptions": {},
+          "internationalOptions": {},
+          "advancedOptions": {},
+          "testLabel": false
+        }
+      """
+
+      val testLabel = parse(json).extract[NewLabelForOrder]
+
+      testLabel.orderId should equal(93348442)
+      testLabel.carrierCode should equal("fedex")
+      testLabel.weight.map(_.value) should equal(Some(2))
+    }
+
+    "create an label in ShipStation mock server" in {
+
+      val newLabel = Order.createLabelForOrder(
+        orderId = 93348442,
+        carrierCode = "fedex",
+        serviceCode = "fedex_2day",
+        shipDate = "2014-04-03",
+        weight = Some(Weight(
+          value = 2,
+          units = "pounds"
+        )),
+        testLabel = false
+      )
+
+      val possibleLabel = {
+        Try(
+          Await.result(newLabel, new DurationInt(10).seconds)
+        ) match {
+          case TrySuccess(Full(shipStationOrder)) =>
+            Full(shipStationOrder)
+
+          case TrySuccess(shipStationFailure) =>
+            shipStationFailure
+
+          case TryFail(throwable: Throwable) =>
+            Empty
+        }
+      }
+
+      possibleLabel.map(_.shipmentId) should equal(Full(72513480))
+      possibleLabel.map(_.shipmentCost) should equal(Full(7.3))
+      possibleLabel.map(_.trackingNumber) should equal(Full("248201115029520"))
+    }
   }
 }
