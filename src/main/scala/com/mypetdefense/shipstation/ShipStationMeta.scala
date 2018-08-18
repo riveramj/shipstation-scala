@@ -36,13 +36,14 @@ trait Gettable[T <: ShipStationObject] extends ShipStationMeta {
   }
 }
 
-/*
+
 abstract class Listable[Z <: ShipStationList[_]](implicit mf: Manifest[Z]) extends ShipStationMeta {
   def list(implicit exec: ShipStationExecutor): Future[Box[Z]] = {
     exec.executeFor[Z](baseResourceCalculator(exec.baseReq))
   }
 }
 
+/*
 trait Deleteable extends ShipStationMeta {
   def delete(id: String)(implicit exec: ShipStationExecutor): Future[Box[DeleteResponse]] = {
     val deleteReq = (baseResourceCalculator(exec.baseReq) / id).DELETE
@@ -78,13 +79,13 @@ trait ChildGettable[T <: ShipStationObject] extends ChildShipStationMeta {
     exec.executeFor[T](getReq)
   }
 }
-/*
+
 abstract class ChildListable[Z <: ShipStationList[_]](implicit mf: Manifest[Z]) extends ChildShipStationMeta {
   def list(parentId: String)(implicit exec: ShipStationExecutor): Future[Box[Z]] = {
     exec.executeFor[Z](baseResourceCalculator(exec.baseReq, parentId: String))
   }
 }
-
+/*
 trait ChildDeleteable extends ChildShipStationMeta {
   def delete(parentId: String, id: String)(implicit exec: ShipStationExecutor): Future[Box[DeleteResponse]] = {
     val deleteReq = (baseResourceCalculator(exec.baseReq, parentId) / id).DELETE
