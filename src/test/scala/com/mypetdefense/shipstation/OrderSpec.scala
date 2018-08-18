@@ -303,6 +303,7 @@ class LabelSpec extends WordSpec with Matchers {
         carrierCode = "fedex",
         serviceCode = "fedex_2day",
         shipDate = "2014-04-03",
+        packageCode = "package",
         weight = Some(Weight(
           value = 2,
           units = "pounds"
