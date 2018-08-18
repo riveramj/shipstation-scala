@@ -8,6 +8,8 @@ import net.liftweb.util.Helpers._
 import dispatch._, Defaults._
 import com.ning.http.client.Response
 
+import scala.collection.JavaConversions._
+
 /**
  * The base class for all singletons that will facilitate communication
  * with ShipStation on behalf of the top-level model objects.
@@ -38,8 +40,10 @@ trait Gettable[T <: ShipStationObject] extends ShipStationMeta {
 
 
 abstract class Listable[Z <: ShipStationList[_]](implicit mf: Manifest[Z]) extends ShipStationMeta {
-  def list(implicit exec: ShipStationExecutor): Future[Box[Z]] = {
-    exec.executeFor[Z](baseResourceCalculator(exec.baseReq))
+  def list(params: List[(String, String)] = Nil)(implicit exec: ShipStationExecutor): Future[Box[Z]] = {
+    val listReq = baseResourceCalculator(exec.baseReq) <<? params
+    println(listReq.toRequest.getQueryParams.toList.map(param => (param.getName, param.getValue)) + " ====")
+    exec.executeFor[Z](listReq)
   }
 }
 

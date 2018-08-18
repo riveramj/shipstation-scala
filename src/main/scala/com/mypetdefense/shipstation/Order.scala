@@ -180,8 +180,6 @@ object Order extends Listable[OrderList] with Gettable[Order] {
 
     val params = compact(render(Extraction.decompose(newLabel)))
 
-    println(params)
-
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createlabelfororder" << params
 
     exec.executeFor[Label](uri)

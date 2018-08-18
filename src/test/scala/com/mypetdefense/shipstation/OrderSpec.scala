@@ -189,7 +189,7 @@ class OrderSpec extends WordSpec with Matchers {
   "retrieve all orders from ShipStation mock server" in {
     val orders = {
       Try(
-        Await.result(Order.list, new DurationInt(10).seconds)
+        Await.result(Order.list(), new DurationInt(10).seconds)
       ) match {
         case TrySuccess(Full(orderList)) =>
           Full(orderList)
