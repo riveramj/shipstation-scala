@@ -63,7 +63,7 @@ case class HoldOrderResults(
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))
 }
 
-object Order extends Gettable[Order] {
+object Order extends Listable[OrderList] with Gettable[Order] {
   def baseResourceCalculator(req: Req) = req / "orders"
   
    def create(

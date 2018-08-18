@@ -186,18 +186,38 @@ class OrderSpec extends WordSpec with Matchers {
     }
   }
 
+  "retrieve all orders from ShipStation mock server" in {
+    val orders = {
+      Try(
+        Await.result(Order.list, new DurationInt(10).seconds)
+      ) match {
+        case TrySuccess(Full(orderList)) =>
+          Full(orderList)
+
+        case TrySuccess(shipStationFailure) =>
+          shipStationFailure
+
+        case TryFail(throwable: Throwable) =>
+          Empty
+      }
+    }
+
+    orders.map(_.orders.size) should equal(Full(2))
+    orders.map(_.orders.map(_.orderId)).openOr(Nil) should equal(List(987654321, 123456789))
+  }
+
   "retrieve an order from ShipStation mock server" in {
     val testOrder = {
       Try(
         Await.result(Order.get("94113592"), new DurationInt(10).seconds)
       ) match {
         case TrySuccess(Full(shipStationOrder)) =>
-        Full(shipStationOrder)
-      
-      case TrySuccess(shipStationFailure) =>
-        shipStationFailure
+          Full(shipStationOrder)
 
-      case TryFail(throwable: Throwable) =>
+        case TrySuccess(shipStationFailure) =>
+          shipStationFailure
+
+        case TryFail(throwable: Throwable) =>
           Empty
       }
     }
@@ -229,12 +249,12 @@ class OrderSpec extends WordSpec with Matchers {
         Await.result(newOrder, new DurationInt(10).seconds)
       ) match {
         case TrySuccess(Full(shipStationOrder)) =>
-        Full(shipStationOrder)
-      
-      case TrySuccess(shipStationFailure) =>
-        shipStationFailure
+          Full(shipStationOrder)
 
-      case TryFail(throwable: Throwable) =>
+        case TrySuccess(shipStationFailure) =>
+          shipStationFailure
+
+        case TryFail(throwable: Throwable) =>
           Empty
       }
     }
@@ -250,23 +270,23 @@ class LabelSpec extends WordSpec with Matchers {
   "Label object" should {
     "retrieve correct fields from ShipStation's JSON" in {
       val json = """
-        {
-          "orderId": 93348442,
-          "carrierCode": "fedex",
-          "serviceCode": "fedex_2day",
-          "packageCode": "package",
-          "confirmation": {},
-          "shipDate": "2014-04-03",
-          "weight": {
-            "value": 2,
-            "units": "pounds"
-          },
-          "dimensions": {},
-          "insuranceOptions": {},
-          "internationalOptions": {},
-          "advancedOptions": {},
-          "testLabel": false
-        }
+      {
+        "orderId": 93348442,
+        "carrierCode": "fedex",
+        "serviceCode": "fedex_2day",
+        "packageCode": "package",
+        "confirmation": {},
+        "shipDate": "2014-04-03",
+        "weight": {
+          "value": 2,
+          "units": "pounds"
+        },
+        "dimensions": {},
+        "insuranceOptions": {},
+        "internationalOptions": {},
+        "advancedOptions": {},
+        "testLabel": false
+      }
       """
 
       val testLabel = parse(json).extract[NewLabelForOrder]

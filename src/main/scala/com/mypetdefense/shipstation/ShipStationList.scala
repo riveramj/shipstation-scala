@@ -16,3 +16,14 @@ trait ShipStationList[T] extends ShipStationObject {
   val pages: Int
   val raw: Option[JValue]
 }
+
+case class OrderList(
+  orders: List[Order],
+  total: Int,
+  page: Int,
+  pages: Int,
+  raw: Option[JValue] = None
+) extends ShipStationList[Order] {
+  def withRaw(raw: JValue) = this.copy(raw = Some(raw))
+}
+
