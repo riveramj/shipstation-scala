@@ -27,3 +27,12 @@ case class OrderList(
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))
 }
 
+case class ShipmentList(
+  shipments: List[Shipment],
+  total: Int,
+  page: Int,
+  pages: Int,
+  raw: Option[JValue] = None
+) extends ShipStationList[Shipment] {
+  def withRaw(raw: JValue) = this.copy(raw = Some(raw))
+}
