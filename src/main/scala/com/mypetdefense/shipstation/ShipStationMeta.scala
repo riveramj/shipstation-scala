@@ -42,7 +42,6 @@ trait Gettable[T <: ShipStationObject] extends ShipStationMeta {
 abstract class Listable[Z <: ShipStationList[_]](implicit mf: Manifest[Z]) extends ShipStationMeta {
   def list(params: List[(String, String)] = Nil)(implicit exec: ShipStationExecutor): Future[Box[Z]] = {
     val listReq = baseResourceCalculator(exec.baseReq) <<? params
-    println(listReq.toRequest.getQueryParams.toList.map(param => (param.getName, param.getValue)) + " ====")
     exec.executeFor[Z](listReq)
   }
 }
