@@ -1,9 +1,12 @@
 package com.mypetdefense.shipstation
 
 import net.liftweb.common._
-import net.liftweb.json._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
+
+import net.liftweb.json._
+  import JsonDSL._
+  import Extraction._
 
 import dispatch._, Defaults._
 import com.ning.http.client.Response
@@ -15,15 +18,23 @@ import java.nio.charset.StandardCharsets
  * Case class describing a raw response from ShipStation, including
  * HTTP status code and JValue representation of the payload.
 **/
-case class ShipStationResponse(code: Int, json: JValue)
+case class ShipStationResponse(code: Int, response: Response, json: Box[JValue])
 
 /**
  * Response transformer for use with dispatch to turn a Response
  * into an instance of ShipStationResponse.
 **/
 object AsShipStationResponse extends (Response => ShipStationResponse) {
-  def apply(res: Response) = {
-    ShipStationResponse(res.getStatusCode(), as.lift.Json(res))
+  def apply(response: Response) = {
+
+    response.getStatusCode() match {
+      case 429 =>
+        val rateLimitReset = response.getHeader("X-Rate-Limit-Reset")
+        throw new RateLimitException(rateLimitReset.toString)
+      
+      case statusCode =>
+        ShipStationResponse(statusCode, response, tryo(as.lift.Json(response)))
+    }
   }
 }
 
@@ -51,21 +62,34 @@ class ShipStationExecutor(
    * code shouldn't need to use this unless it's implementing functionality not supported by
    * streifen for some reason.
   **/
-  def execute(request: Req): Future[Box[ShipStationResponse]] = {
-    httpExecutor(request > AsShipStationResponse).either.map {
+  def execute(request: Req, retriesRemaining: Int = 5): Future[Box[ShipStationResponse]] = {
+    httpExecutor(request > AsShipStationResponse).either.flatMap {
       case Left(throwable) =>
-        Failure("Error occured while talking to shipStation.", Full(throwable), Empty)
+        throwable match {
+          case rateLimitException: RateLimitException =>
+            val rateLimitReset = tryo(throwable.getMessage().toInt).openOr(0)
+            if (retriesRemaining > 0) {
+              Thread.sleep((rateLimitReset + 1) * 1000)
+              execute(request, retriesRemaining - 1)
+            } else {
+              Future(Failure("Shipstation rate limit retry failed too many times.", Full(throwable), Empty))
+            }
+          
+          case throwable: Throwable =>
+             Future(Failure("Error occured while talking to shipStation.", Full(throwable), Empty))
+
+      }
 
       case Right(shipStationResponse) =>
-        Full(shipStationResponse)
+        Future(Full(shipStationResponse))
     }
   }
 
   protected def handler[T](implicit mf: Manifest[T]): (ShipStationResponse)=>Box[T] = {
-    case ShipStationResponse(200, json) =>
-      tryo(json.extract[T])
+    case ShipStationResponse(200, response, json) =>
+      json.flatMap(possibleJson => tryo(possibleJson.extract[T]))
 
-    case ShipStationResponse(code, json) =>
+    case ShipStationResponse(code, response, json) =>
       Failure(s"Unexpected $code") ~> json
   }
 
@@ -77,7 +101,7 @@ class ShipStationExecutor(
    * code shouldn't need to use this unless it's implementing functionality not supported by
    * it for some reason.
   **/
-  def executeFor[T <: ShipStationObject](request: Req)(implicit mf: Manifest[T]): Future[Box[T]] = {
+  def executeFor[T <: ShipStationObject](request: Req, retriesRemaining: Int = 5)(implicit mf: Manifest[T]): Future[Box[T]] = {
     execute(request).map { futureBox =>
       for {
         shipStationResponse <- futureBox

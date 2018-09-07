@@ -12,6 +12,8 @@ import scala.language.postfixOps
 
 import scala.collection.concurrent.TrieMap
 
+import dispatch._, Defaults._
+
 import org.scalatest._
 
 class OrderSpec extends WordSpec with Matchers {
@@ -189,7 +191,7 @@ class OrderSpec extends WordSpec with Matchers {
   "retrieve all orders from ShipStation mock server" in {
     val orders = {
       Try(
-        Await.result(Order.list(), new DurationInt(10).seconds)
+        Await.result(Order.list(), new DurationInt(2).seconds)
       ) match {
         case TrySuccess(Full(orderList)) =>
           Full(orderList)
@@ -209,7 +211,7 @@ class OrderSpec extends WordSpec with Matchers {
   "retrieve an order from ShipStation mock server" in {
     val testOrder = {
       Try(
-        Await.result(Order.get("94113592"), new DurationInt(10).seconds)
+        Await.result(Order.get("250260522"), new DurationInt(10).seconds)
       ) match {
         case TrySuccess(Full(shipStationOrder)) =>
           Full(shipStationOrder)
