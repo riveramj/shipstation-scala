@@ -4,18 +4,18 @@ version := "0.0.1-SNAPSHOT"
 
 organization := "com.mypetdefense.shipstation"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.7"
 
 libraryDependencies ++= {
-  val liftVersion = "2.6.3"
+  val liftVersion = "3.3.0"
   Seq(
     "ch.qos.logback"            %  "logback-classic"      % "1.1.3",
     "net.liftweb"               %% "lift-common"          % liftVersion,
     "net.liftweb"               %% "lift-util"            % liftVersion,
     "net.liftweb"               %% "lift-json"            % liftVersion,
-    "net.databinder.dispatch"   %% "dispatch-core"        % "0.11.3",
-    "net.databinder.dispatch"   %% "dispatch-lift-json"   % "0.11.3",
-    "org.scalatest"             %% "scalatest"            % "2.2.6"        % "test"
+    "org.dispatchhttp"          %% "dispatch-core"        % "0.14.0",
+    "org.dispatchhttp"          %% "dispatch-lift-json"   % "0.14.0",
+    "org.scalatest"             %% "scalatest"            % "3.0.5"        % "test"
   )
 }
 

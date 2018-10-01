@@ -277,16 +277,12 @@ class LabelSpec extends WordSpec with Matchers {
         "carrierCode": "fedex",
         "serviceCode": "fedex_2day",
         "packageCode": "package",
-        "confirmation": {},
+        "confirmation": "",
         "shipDate": "2014-04-03",
         "weight": {
           "value": 2,
           "units": "pounds"
         },
-        "dimensions": {},
-        "insuranceOptions": {},
-        "internationalOptions": {},
-        "advancedOptions": {},
         "testLabel": false
       }
       """

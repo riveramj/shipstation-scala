@@ -130,7 +130,7 @@ object Order extends Listable[OrderList] with Gettable[Order] {
       tagIds = tagIds
     )
 
-    val params = compact(render(Extraction.decompose(newOrder)))
+    val params = compactRender(Extraction.decompose(newOrder))
 
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createorder" << params
 
@@ -141,7 +141,7 @@ object Order extends Listable[OrderList] with Gettable[Order] {
 
     val orderInfo = ("orderId", orderId) ~ ("holdUntilDate", holdUntilDate)
 
-    val params = compact(render(orderInfo))
+    val params = compactRender(orderInfo)
 
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "holduntil" << params
 
@@ -178,7 +178,7 @@ object Order extends Listable[OrderList] with Gettable[Order] {
       testLabel = testLabel
     )
 
-    val params = compact(render(Extraction.decompose(newLabel)))
+    val params = compactRender(Extraction.decompose(newLabel))
 
     val uri = baseResourceCalculator(exec.baseReq <:< Map("Content-Type" -> "application/json")) / "createlabelfororder" << params
 

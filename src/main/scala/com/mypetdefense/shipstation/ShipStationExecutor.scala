@@ -9,7 +9,7 @@ import net.liftweb.json._
   import Extraction._
 
 import dispatch._, Defaults._
-import com.ning.http.client.Response
+import org.asynchttpclient.Response
 
 import java.util.Base64
 import java.nio.charset.StandardCharsets
@@ -48,7 +48,7 @@ class ShipStationExecutor(
 ) {
   val basicAuthentication = Base64.getEncoder.encodeToString(s"${key}:${secret}".getBytes(StandardCharsets.UTF_8))
 
-  val httpExecutor = new Http()
+  val httpExecutor = Http.default
   val baseReq = url(uri) <:<
   Map("Authorization" -> s"Basic ${basicAuthentication}", "User-Agent" -> ("shipstation-scala/" + BuildInfo.version))
   
@@ -101,7 +101,7 @@ class ShipStationExecutor(
    * code shouldn't need to use this unless it's implementing functionality not supported by
    * it for some reason.
   **/
-  def executeFor[T <: ShipStationObject](request: Req, retriesRemaining: Int = 5)(implicit mf: Manifest[T]): Future[Box[T]] = {
+  def executeFor[T <: ShipStationObject](request: Req)(implicit mf: Manifest[T]): Future[Box[T]] = {
     execute(request).map { futureBox =>
       for {
         shipStationResponse <- futureBox
