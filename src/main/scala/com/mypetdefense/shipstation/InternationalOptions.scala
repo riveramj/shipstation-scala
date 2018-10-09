@@ -9,9 +9,9 @@ import net.liftweb.util.Helpers._
 import dispatch._, Defaults._
 
 case class InternationalOptions(
-  contents: String,
+  contents: Option[String],
   customsItems: List[CustomsItems],
-  nonDelivery: String,
+  nonDelivery: Option[String],
   raw: Option[JValue] = None
 ) extends ShipStationObject {
   def withRaw(raw: JValue) = this.copy(raw = Some(raw))

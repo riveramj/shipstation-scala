@@ -277,11 +277,25 @@ class LabelSpec extends WordSpec with Matchers {
         "carrierCode": "fedex",
         "serviceCode": "fedex_2day",
         "packageCode": "package",
-        "confirmation": "",
+        "confirmation": "delivery",
         "shipDate": "2014-04-03",
         "weight": {
           "value": 2,
           "units": "pounds"
+        },
+        "dimensions": null,
+        "insuranceOptions": {
+          "provider": null,
+          "insureShipment": false,
+          "insuredValue": 0.0
+        },
+        "internationalOptions": {},
+        "advancedOptions": {
+          "billToParty": null,
+          "billToAccount": null,
+          "billToPostalCode": null,
+          "billToCountryCode": null,
+          "storeId": 122697
         },
         "testLabel": false
       }
