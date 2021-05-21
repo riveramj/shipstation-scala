@@ -98,7 +98,7 @@ object Order extends Listable[OrderList] with Gettable[Order] {
     tagIds: Option[List[Int]] = None
   )(implicit exec: ShipStationExecutor): Future[Box[Order]] = {
     val newOrder = Order(
-      orderId = -1,
+      orderId = 0,
       orderNumber = orderNumber,
       orderKey = orderKey,
       orderDate = orderDate,
